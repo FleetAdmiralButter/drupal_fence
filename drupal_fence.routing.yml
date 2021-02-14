@@ -1,0 +1,7 @@
+drupal_fence.config:
+  path: /admin/config/development/drupal_fence
+  defaults:
+    _title: 'Drupal Fence Settings'
+    _form: 'Drupal\drupal_fence\Form\DrupalFenceConfigForm'
+  requirements:
+    _permission: 'access content'

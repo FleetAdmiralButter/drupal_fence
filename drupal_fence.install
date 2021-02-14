@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * @file
+ * Install and update functions for drupal_fence module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function drupal_fence_install() {
+    $entries = [
+        [
+            'exploit_uri' => '/test-link'
+        ],
+        [
+            'exploit_uri' => '/test-link-2'
+        ],
+    ];
+
+    $connection = \Drupal::database();
+    foreach ($entries as $entry) {
+        $connection->insert('drupal_fence_flagged_routes')->fields($entry)->execute();
+    }
+}
+
+/**
+ * Implements hook_schema().
+ */
+function drupal_fence_schema() {
+    $schema['drupal_fence_flagged_routes'] = [
+        'description' => 'Stores known routes that attempt to exploit vulnerabilities.',
+        'fields' => [
+            'id' => [
+                'type' => 'serial',
+                'not null' => TRUE,
+                'description' => 'Primary Key',
+                'default' => 0
+            ],
+            'exploit_uri' => [
+                'type' => 'varchar',
+                'length' => '255',
+                'not null' => TRUE,
+                'default' => '',
+                'description' => 'URI of the exploit route'
+            ]
+        ],
+        'primary_key' => ['id'],
+    ];
+    return $schema;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function drupal_fence_install() {
+    $schema = Database::getConnection()->schema();
+    $schema->dropTable('drupal_fence_flagged_routes');
+}

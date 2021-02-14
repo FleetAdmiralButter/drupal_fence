@@ -1,0 +1,6 @@
+drupal_fence.config:
+  title: 'Drupal Fence settings'
+  description: 'Configure Drupal Fence'
+  parent: system.admin_config_system
+  route_name: drupal_fence.config
+  weight: 10
