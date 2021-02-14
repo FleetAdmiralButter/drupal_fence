@@ -1,0 +1,5 @@
+services:
+  drupal_fence.drupal_fence.subscriber:
+    class: Drupal\drupal_fence\DrupalFenceSubscriber
+    tags:
+      - { name: 'event_subscriber'}

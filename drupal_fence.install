@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\Database\Database;
 /**
  * @file
  * Install and update functions for drupal_fence module.
@@ -31,12 +32,6 @@ function drupal_fence_schema() {
     $schema['drupal_fence_flagged_routes'] = [
         'description' => 'Stores known routes that attempt to exploit vulnerabilities.',
         'fields' => [
-            'id' => [
-                'type' => 'serial',
-                'not null' => TRUE,
-                'description' => 'Primary Key',
-                'default' => 0
-            ],
             'exploit_uri' => [
                 'type' => 'varchar',
                 'length' => '255',
@@ -45,7 +40,6 @@ function drupal_fence_schema() {
                 'description' => 'URI of the exploit route'
             ]
         ],
-        'primary_key' => ['id'],
     ];
     return $schema;
 }
@@ -53,7 +47,7 @@ function drupal_fence_schema() {
 /**
  * Implements hook_uninstall().
  */
-function drupal_fence_install() {
+function drupal_fence_uninstall() {
     $schema = Database::getConnection()->schema();
     $schema->dropTable('drupal_fence_flagged_routes');
 }
