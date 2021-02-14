@@ -17,3 +17,8 @@ urls:
   - '/another-evil-url'
 ```
 
+# Warning and Disclaimer
+
+Please, please, do not use Drupal Fence on anything important just yet - it is far from production ready.
+
+You use this module at your own risk. I will not be responsible for any consequences resulting from the use of this module. This includes, but is not limited to: injury/death, loss of data, loss of revenue, information security breaches, environmental damage and Umbral Calamities.
