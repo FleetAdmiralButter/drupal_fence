@@ -12,12 +12,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class DrupalFenceSubscriber implements EventSubscriberInterface {
 
-    public function DrupalFenceCheckPath(GetResponseEvent $event) {
+    public function DrupalFenceCheckRequest(GetResponseEvent $event) {
         $path = \Drupal::request()->getRequestUri();
         $isAllowed = $this->_drupal_fence_is_allowed(\Drupal::request()->getClientIp());
         $isExploitPath = $this->_drupal_fence_check_path($path);
 
-        if ($isExploitPath) {
+        // Only log if the request is allowed to prevent an attacker from overloading the database.
+        if ($isAllowed && $isExploitPath) {
             $this->_drupal_fence_log_violation();
         }
         
@@ -31,8 +32,8 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
      * {@inheritdoc}
      */
     static function getSubscribedEvents() {
-        // A priority of 150 was chosen so that it fires before Fast404, but after Static Page Cache. 
-        $events[KernelEvents::REQUEST] = array('DrupalFenceCheckPath', 150);
+        // A priority of 150 was chosen so that Drupal Fence fires before Fast404, but after Static Page Cache. 
+        $events[KernelEvents::REQUEST] = array('DrupalFenceCheckRequest', 150);
         return $events;
     }
 
@@ -49,7 +50,7 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
         $database = \Drupal::service('database');
         $result = $database->query("SELECT * FROM {drupal_fence_flagged_routes} WHERE exploit_uri LIKE :current_path",
         [
-            ':current_path' => $path,
+            ':current_path' => $database->escapeLike($path),
         ])->fetchAll();
 
         return (count($result) > 0) ? TRUE : FALSE;
