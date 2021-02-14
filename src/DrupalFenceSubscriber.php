@@ -47,12 +47,16 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
     }
 
     private function _drupal_fence_check_path($path) {
+        $flagged = FALSE;
         $database = \Drupal::service('database');
-        $result = $database->query("SELECT * FROM {drupal_fence_flagged_routes} WHERE exploit_uri LIKE :current_path",
-        [
-            ':current_path' => $database->escapeLike($path),
-        ])->fetchAll();
-
-        return (count($result) > 0) ? TRUE : FALSE;
+        $result = $database->query("SELECT * FROM {drupal_fence_flagged_routes}");
+        foreach ($result as $r) {
+            if (strpos($path, $r->exploit_uri) !== false) {
+                drupal_set_message('hjkdsfsdf');
+                $flagged = TRUE;
+                break;
+            }
+        }
+        return $flagged;
     }
 }
