@@ -21,11 +21,18 @@ class DrupalFenceConfigForm extends ConfigFormBase {
         $form = parent::buildForm($form, $form_state);
         $config = $this->config('drupal_fence.settings');
 
-        $form['name'] = [
-            '#type' => 'textfield',
-            '#title' => $this->t('Just a name field'),
-            '#default_value' => $config->get('drupal_fence.name'),
-            '#description' => $this->t('Test field'),
+        $form['threshold'] = [
+            '#type' => 'number',
+            '#title' => $this->t('Threshold'),
+            '#default_value' => $config->get('drupal_fence.threshold'),
+            '#description' => $this->t('Number of violations a client can trigger before being blocked by Drupal Fence.'),
+        ];
+
+        $form['expiration'] = [
+            '#type' => 'number',
+            '#title' => $this->t('Expiration'),
+            '#default_value' => $config->get('drupal_fence.expiration'),
+            '#description' => $this->t('How long to track violating clients.'),
         ];
 
         return $form;
@@ -52,7 +59,9 @@ class DrupalFenceConfigForm extends ConfigFormBase {
      */
     public function submitForm(array &$form, FormStateInterface $form_state) {
         $config = $this->config('drupal_fence.settings');
-        $config->set('drupal_fence.name', $form_state->getValue('name'));
+        $config->set('drupal_fence.listener_priority', $form_state->getValue('listener_priority'));
+        $config->set('drupal_fence.threshold', $form_state->getValue('threshold'));
+        $config->set('drupal_fence.expiration', $form_state->getValue('expiration'));
         $config->save();
         return parent::submitForm($form, $form_state);
     }

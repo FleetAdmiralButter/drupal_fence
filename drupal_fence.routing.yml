@@ -4,4 +4,11 @@ drupal_fence.config:
     _title: 'Drupal Fence Settings'
     _form: 'Drupal\drupal_fence\Form\DrupalFenceConfigForm'
   requirements:
-    _permission: 'access content'
+    _permission: 'administer site configuration'
+drupal_fence.import:
+  path: /admin/config/development/drupal_fence_import
+  defaults:
+    _title: 'Drupal Fence Import'
+    _form: 'Drupal\drupal_fence\Form\DrupalFenceImportForm'
+  requirements:
+    _permission: 'administer site configuration'

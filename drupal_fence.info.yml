@@ -1,5 +1,5 @@
 name: Drupal Fence
-description: First Custom Drupal 8 Module
+description: Blocks clients which spam known malicious requests
 package: Custom
 type: module
 version: 1.0

@@ -4,3 +4,9 @@ drupal_fence.config:
   parent: system.admin_config_system
   route_name: drupal_fence.config
   weight: 10
+drupal_fence.import:
+  title: 'Drupal Fence import'
+  description: 'Import URLs'
+  parent: system.admin_config_system
+  route_name: drupal_fence.import
+  weight: 10

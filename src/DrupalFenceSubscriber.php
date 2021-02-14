@@ -14,7 +14,7 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
 
     public function DrupalFenceCheckPath(GetResponseEvent $event) {
         $path = \Drupal::request()->getRequestUri();
-        $isAllowed = _drupal_fence_is_allowed(\Drupal::request()->getClientIp());
+        $isAllowed = $this->_drupal_fence_is_allowed(\Drupal::request()->getClientIp());
         $isExploitPath = $this->_drupal_fence_check_path($path);
 
         if ($isExploitPath) {
@@ -31,17 +31,18 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
      * {@inheritdoc}
      */
     static function getSubscribedEvents() {
-        $events[KernelEvents::REQUEST] = array('DrupalFenceCheckPath', 20);
+        // A priority of 150 was chosen so that it fires before Fast404, but after Static Page Cache. 
+        $events[KernelEvents::REQUEST] = array('DrupalFenceCheckPath', 150);
         return $events;
     }
 
     private function _drupal_fence_is_allowed($client_identifier) {
-        return \Drupal::flood()->isAllowed('drupal_fence.security_violation', 5, 3600, $client_identifier);
+        return \Drupal::flood()->isAllowed('drupal_fence.security_violation', \Drupal::config('drupal_fence.settings')->get('drupal_fence.threshold'), \Drupal::config('drupal_fence.settings')->get('drupal_fence.expiration'), $client_identifier);
     }
 
     private function _drupal_fence_log_violation() {
         $client_identifier = \Drupal::request()->getClientIp();
-        \Drupal::flood()->register('drupal_fence.security_violation', 3600, $client_identifier);
+        \Drupal::flood()->register('drupal_fence.security_violation', \Drupal::config('drupal_fence.settings')->get('drupal_fence.expiration'), $client_identifier);
     }
 
     private function _drupal_fence_check_path($path) {
