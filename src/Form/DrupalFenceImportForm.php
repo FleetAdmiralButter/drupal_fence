@@ -4,6 +4,7 @@ namespace Drupal\drupal_fence\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Cache\Cache;
 use Symfony\Component\Yaml\Yaml;
 
 class DrupalFenceImportForm extends ConfigFormBase {
@@ -66,6 +67,7 @@ class DrupalFenceImportForm extends ConfigFormBase {
         foreach ($urls['urls'] as $url) {
             $database->insert('drupal_fence_flagged_routes')->fields(['exploit_uri' => $url])->execute();
         }
+        Cache::invalidateTags(['drupal_fence_checked_paths']);
         drupal_set_message('The URLs were imported successfully.');
     }
 }

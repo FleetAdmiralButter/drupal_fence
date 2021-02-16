@@ -6,6 +6,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Drupal\Core\Cache\CacheBackendInterface;
 
 /**
  * Provides a DrupalFenceSubscriber
@@ -46,16 +47,28 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
         \Drupal::flood()->register('drupal_fence.security_violation', \Drupal::config('drupal_fence.settings')->get('drupal_fence.expiration'), $client_identifier);
     }
 
+    private function _drupal_fence_get_cid($path) {
+        return 'drupal_fence:checked_path:' . hash('sha1', $path);
+    }
+
     private function _drupal_fence_check_path($path) {
         $flagged = FALSE;
-        $database = \Drupal::service('database');
-        $result = $database->query("SELECT * FROM {drupal_fence_flagged_routes}");
-        foreach ($result as $r) {
-            if (strpos($path, $r->exploit_uri) !== false) {
-                drupal_set_message('hjkdsfsdf');
-                $flagged = TRUE;
-                break;
+        if($cache = \Drupal::cache('data')->get($this->_drupal_fence_get_cid($path))) {
+            $flagged = $cache->data['flagged'];
+        } else {
+            $database = \Drupal::service('database');
+            $result = $database->query("SELECT * FROM {drupal_fence_flagged_routes}");
+            foreach ($result as $r) {
+                if (strpos($path, $r->exploit_uri) !== false) {
+                    $flagged = TRUE;
+                    break;
+                }
             }
+            $cached_data = [
+                'path' => $path,
+                'flagged' => $flagged,
+            ];
+            \Drupal::cache('data')->set($this->_drupal_fence_get_cid($path), $cached_data, CacheBackendInterface::CACHE_PERMANENT, ['drupal_fence_checked_paths']);
         }
         return $flagged;
     }
