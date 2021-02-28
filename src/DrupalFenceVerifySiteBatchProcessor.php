@@ -8,6 +8,7 @@ use Drupal\Core\StreamWrapper\PublicStream;
 class DrupalFenceVerifySiteBatchProcessor {
 
     public function drupalFenceBatchProcessorCallback($stage, &$context) {
+        return;
         switch($stage) {
             case 'flush_drupal_caches':
                 $context['message'] = 'Flushing Drupal caches...';
