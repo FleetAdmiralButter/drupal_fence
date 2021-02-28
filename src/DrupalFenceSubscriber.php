@@ -57,18 +57,20 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
             $flagged = $cache->data['flagged'];
         } else {
             $database = \Drupal::service('database');
-            $result = $database->query("SELECT * FROM {drupal_fence_flagged_routes}");
-            foreach ($result as $r) {
-                if (strpos($path, $r->exploit_uri) !== false) {
-                    $flagged = TRUE;
-                    break;
-                }
-            }
+            $result = $database->query("SELECT exploit_uri FROM {drupal_fence_flagged_routes} WHERE INSTR(:path, exploit_uri) > 0", [
+                ':path' => $path
+            ])->fetchAll();
+            $flagged = (count($result) > 0) ? TRUE : FALSE;
             $cached_data = [
                 'path' => $path,
                 'flagged' => $flagged,
             ];
-            \Drupal::cache('data')->set($this->_drupal_fence_get_cid($path), $cached_data, CacheBackendInterface::CACHE_PERMANENT, ['drupal_fence_checked_paths']);
+            \Drupal::cache('data')
+                ->set($this->_drupal_fence_get_cid($path), 
+                      $cached_data, 
+                      CacheBackendInterface::CACHE_PERMANENT, 
+                      ['drupal_fence_checked_paths']
+                    );
         }
         return $flagged;
     }
