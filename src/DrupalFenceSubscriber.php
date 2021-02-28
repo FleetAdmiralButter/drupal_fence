@@ -14,6 +14,11 @@ use Drupal\Core\Cache\CacheBackendInterface;
 class DrupalFenceSubscriber implements EventSubscriberInterface {
 
     public function DrupalFenceCheckRequest(GetResponseEvent $event) {
+        
+        if (\Drupal::config('drupal_fence.settings')->get('drupal_fence.enabled') == 0) {
+            return;
+        }
+        
         $client_identifier = \Drupal::request()->getClientIp();
         $path = \Drupal::request()->getRequestUri();
 

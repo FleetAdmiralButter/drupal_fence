@@ -1,3 +1,4 @@
 drupal_fence:
+  enabled: 1
   threshold: 5
   expiration: 3600

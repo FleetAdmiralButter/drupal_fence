@@ -44,6 +44,19 @@ function drupal_fence_schema() {
     return $schema;
 }
 
+function drupal_fence_requirements($phase) {
+    if ($phase == 'runtime') {
+        if (\Drupal::config('drupal_fence.settings')->get('drupal_fence.enabled') == 0) {
+            $requirements['drupal_fence'] = [
+                'title' => t('Drupal Fence'),
+                'value' => t('Drupal Fence is standing down. You can enable it on the configuration page, or uninstall it if it is no longer needed.'),
+                'severity' => REQUIREMENT_WARNING,
+            ];
+        }
+        return $requirements;
+    }
+}
+
 /**
  * Implements hook_uninstall().
  */

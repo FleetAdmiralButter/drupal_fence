@@ -21,6 +21,12 @@ class DrupalFenceConfigForm extends ConfigFormBase {
         $form = parent::buildForm($form, $form_state);
         $config = $this->config('drupal_fence.settings');
 
+        $form['enabled'] = [
+            '#type' => 'checkbox',
+            '#title' => $this->t('Enable Drupal Fence'),
+            '#default_value' => $config->get('drupal_fence.enabled'),
+            '#description' => $this->t('Whether Drupal Fence should run. Disabling Drupal Fence when its not needed can improve the performance of uncached requests.'),
+        ];
         $form['threshold'] = [
             '#type' => 'number',
             '#title' => $this->t('Threshold'),
@@ -59,7 +65,7 @@ class DrupalFenceConfigForm extends ConfigFormBase {
      */
     public function submitForm(array &$form, FormStateInterface $form_state) {
         $config = $this->config('drupal_fence.settings');
-        $config->set('drupal_fence.listener_priority', $form_state->getValue('listener_priority'));
+        $config->set('drupal_fence.enabled', $form_state->getValue('enabled'));
         $config->set('drupal_fence.threshold', $form_state->getValue('threshold'));
         $config->set('drupal_fence.expiration', $form_state->getValue('expiration'));
         $config->save();
