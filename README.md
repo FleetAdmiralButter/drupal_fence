@@ -27,6 +27,12 @@ Drupal Fence will register blocked requests with flood control. By default, a cl
 
 Drupal Fence relies on the client IP address to uniquely identify a client. If your site is behind a load balancer or reverse proxy, please make sure that the `X-Forwarded-For` header is correctly configured. If this isn't configured, Flood Control might block your proxy, resulting in all traffic to your site being blocked!!
 
+# Locked Out
+If you've locked yourself out of your site, do the following:
+
+1) If you have Drush installed, run `drush config-set drupal_fence.settings drupal_fence.enabled 0`, then `drush cr`. This will disable Drupal Fence without uninstalling the module.
+2) If you do not have Drush, you will need to access the database directly, then truncate both the `flood` and `drupal_fence_flagged_routes`. If you still do not have access to the site, you will need to clear the cache by following the instructions at https://www.drupal.org/docs/user_guide/en/prevent-cache-clear.html.
+
 # Warning and Disclaimer
 Please, please, do not use Drupal Fence on anything important just yet - it is far from production ready.
 
