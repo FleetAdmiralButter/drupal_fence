@@ -3,3 +3,5 @@ services:
     class: Drupal\drupal_fence\DrupalFenceSubscriber
     tags:
       - { name: 'event_subscriber'}
+  drupal_fence.request_checker:
+    class: Drupal\drupal_fence\DrupalFenceRequestChecker
