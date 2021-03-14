@@ -9,10 +9,4 @@ drupal_fence.import:
   description: 'Import URLs'
   parent: system.admin_config_system
   route_name: drupal_fence.import
-  weight: 10
-# drupal_fence.verify:
-#   title: 'Drupal Fence verify'
-#   description: 'Verify integrity of Drupal files.'
-#   parent: system.admin_config_system
-#   route_name: drupal_fence.verify
-#   weight: 10
+  weight: 11

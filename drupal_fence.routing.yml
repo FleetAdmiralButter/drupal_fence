@@ -12,17 +12,3 @@ drupal_fence.import:
     _form: 'Drupal\drupal_fence\Form\DrupalFenceImportForm'
   requirements:
     _permission: 'administer site configuration'
-drupal_fence.verify:
-  path: /admin/config/development/drupal_fence_verify
-  defaults:
-    _title: 'Drupal Fence Verify'
-    _form: 'Drupal\drupal_fence\Form\DrupalFenceVerifySiteForm'
-  requirements:
-    _permission: 'administer site configuration'
-drupal_fence.verify_confirm:
-  path: /admin/config/development/drupal_fence_verify_confirm
-  defaults:
-    _title: 'Drupal Fence Verify Confirmation'
-    _form: 'Drupal\drupal_fence\Form\DrupalFenceConfirmVerifySite'
-  requirements:
-    _permission: 'administer site configuration'
