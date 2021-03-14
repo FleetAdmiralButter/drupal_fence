@@ -18,19 +18,27 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
         if (\Drupal::config('drupal_fence.settings')->get('drupal_fence.enabled') == 0) {
             return;
         }
+
+        $silent_mode = \Drupal::config('drupal_fence.settings')->get('drupal_fence.silent_mode');
         
         $client_identifier = \Drupal::request()->getClientIp();
         $path = \Drupal::request()->getRequestUri();
 
-        $isBlocked = \Drupal::service('drupal_fence.request_checker')->is_blocked_client($client_identifier);
-        $isExploitPath = \Drupal::service('drupal_fence.request_checker')->check_path($path);
-
-        if ($isExploitPath) {
-            // Only log if the client is not yet blocked by flood control to avoid overloading the database.
-            if (!$isBlocked) {
+        $is_blocked = \Drupal::service('drupal_fence.request_checker')->is_blocked_client($client_identifier);
+        $is_exploit_path = \Drupal::service('drupal_fence.request_checker')->check_path($path);
+        
+        // Only log if the client is not already blocked by flood control.
+        if ($is_exploit_path) {
+            if (!$is_blocked) {
                 \Drupal::service('drupal_fence.request_checker')->log_violation($client_identifier);
             }
-            throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+        }
+
+        // Block client if path matches or if they have been blocked by flood control and silent mode is disabled.
+        if ($is_exploit_path || $is_blocked) {
+            if (!$silent_mode) {
+                throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+            }
         }
     }
 
