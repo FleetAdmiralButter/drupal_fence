@@ -34,6 +34,6 @@ If you've locked yourself out of your site, do the following:
 2) If you do not have Drush, you will need to access the database directly, then truncate both the `flood` and `drupal_fence_flagged_routes`. If you still do not have access to the site, you will need to clear the cache by following the instructions at https://www.drupal.org/docs/user_guide/en/prevent-cache-clear.html.
 
 # Warning and Disclaimer
-Please, please, do not use Drupal Fence on anything important just yet - it is far from production ready.
+Please take necessary precautions (perform database backups, QA, etc) if you're using Drupal Fence on anything critical. Although I have tested it thoroughly, there might still be certain edge cases or configurations that will cause it to misbehave. If you find anything, please feel free to create a new issue and I'll have a look. Feedback is always welcome.
 
 You use this module at your own risk. I will not be responsible for any consequences resulting from the use of this module. This includes, but is not limited to: injury/death, loss of data, loss of revenue, information security breaches, environmental damage and Umbral Calamities.
