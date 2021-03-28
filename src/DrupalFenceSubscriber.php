@@ -6,6 +6,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 
 /**
@@ -15,7 +16,8 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
 
     public function DrupalFenceCheckRequest(GetResponseEvent $event) {
         
-        if (\Drupal::config('drupal_fence.settings')->get('drupal_fence.enabled') == 0) {
+        // Don't run if Drupal Fence is disabled or this isn't a master request
+        if ((\Drupal::config('drupal_fence.settings')->get('drupal_fence.enabled') == 0) || !($event->getRequestType() === HttpKernelInterface::MASTER_REQUEST)) {
             return;
         }
 
