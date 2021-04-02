@@ -4,7 +4,7 @@ namespace Drupal\drupal_fence\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-
+use Drupal\Core\Site\Settings;
 class DrupalFenceConfigForm extends ConfigFormBase {
 
     /**
@@ -20,6 +20,7 @@ class DrupalFenceConfigForm extends ConfigFormBase {
     public function buildForm(array $form, FormStateInterface $form_state) {
         $form = parent::buildForm($form, $form_state);
         $config = $this->config('drupal_fence.settings');
+        $listener_priority_text = Settings::get('drupal_fence.listener_priority') ? 'Listener priority is ' . Settings::get('drupal_fence.listener_priority') : 'drupal_fence.listener_priority is not configured in settings.php. Defaulting to a priority of 1000.';
 
         $form['enabled'] = [
             '#type' => 'checkbox',
@@ -47,9 +48,20 @@ class DrupalFenceConfigForm extends ConfigFormBase {
             '#description' => $this->t('How long to track violating clients.'),
         ];
 
+        $form['priority'] = array(
+          '#type' => 'fieldset',
+          '#title' => $this->t('KernelEvent Listener Priority'),
+        );
+
+        $form['priority']['listener_priority'] = [
+          '#type' => 'label',
+          '#title' => $this->t($listener_priority_text),
+        ];
+
         $form['clear'] = array(
-            '#type' => 'fieldset',
-          );
+          '#type' => 'fieldset',
+          '#title' => $this->t('Clear data'),
+        );
 
         $form['clear']['clear_log'] = [
             '#type' => 'checkbox',
