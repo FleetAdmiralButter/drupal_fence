@@ -64,3 +64,10 @@ function drupal_fence_uninstall() {
     $schema = Database::getConnection()->schema();
     $schema->dropTable('drupal_fence_flagged_routes');
 }
+
+function drupal_fence_update_8001() {
+    $config_factory = \Drupal::configFactory();
+    $config = $config_factory->getEditable('drupal_fence.settings');
+    $config->set('drupal_fence.block_response', '403');
+    $config->save(TRUE);
+}

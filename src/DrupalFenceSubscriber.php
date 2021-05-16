@@ -20,6 +20,7 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
         }
 
         $silent_mode = \Drupal::config('drupal_fence.settings')->get('drupal_fence.silent_mode');
+        $block_response = \Drupal::config('drupal_fence.settings')->get('drupal_fence.block_response');
 
         $client_identifier = \Drupal::request()->getClientIp();
         $path = \Drupal::request()->getRequestUri();
@@ -37,7 +38,11 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
         // Block client if path matches or if they have been blocked by flood control and silent mode is disabled.
         if ($is_exploit_path || $is_blocked) {
             if (!$silent_mode) {
-                throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+                if ($block_response === '403') {
+                  throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+                } else {
+                  throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+                }
             }
         }
     }

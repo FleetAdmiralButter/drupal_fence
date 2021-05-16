@@ -3,3 +3,4 @@ drupal_fence:
   threshold: 5
   expiration: 3600
   silent_mode: 0
+  block_response: '403'

@@ -34,15 +34,15 @@ class DrupalFenceRequestChecker {
             $result = $database->query("SELECT exploit_uri FROM {drupal_fence_flagged_routes} WHERE INSTR(:path, exploit_uri) > 0", [
                 ':path' => $path
             ])->fetchAll();
-            $flagged = (count($result) > 0) ? TRUE : FALSE;
+            $flagged = count($result) > 0;
             $cached_data = [
                 'path' => $path,
                 'flagged' => $flagged,
             ];
             \Drupal::cache('data')
-                ->set($this->get_path_cid($path), 
-                      $cached_data, 
-                      CacheBackendInterface::CACHE_PERMANENT, 
+                ->set($this->get_path_cid($path),
+                      $cached_data,
+                      CacheBackendInterface::CACHE_PERMANENT,
                       ['drupal_fence_checked_paths']
                     );
         }

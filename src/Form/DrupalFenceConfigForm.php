@@ -48,6 +48,18 @@ class DrupalFenceConfigForm extends ConfigFormBase {
             '#description' => $this->t('How long to track violating clients.'),
         ];
 
+        $form['block_response'] = [
+          '#type' => 'select',
+          '#title' => $this
+            ->t('Block Response'),
+          '#description' => $this->t('The HTTP status returned when blocking a client.'),
+          '#default_value' => $config->get('drupal_fence.block_response'),
+          '#options' => [
+            '403' => $this->t('403 Access Denied'),
+            '404' => $this->t('404 Not Found'),
+          ],
+        ];
+
         $form['priority'] = array(
           '#type' => 'fieldset',
           '#title' => $this->t('KernelEvent Listener Priority'),
@@ -98,6 +110,7 @@ class DrupalFenceConfigForm extends ConfigFormBase {
         $config->set('drupal_fence.silent_mode', $form_state->getValue('silent_mode'));
         $config->set('drupal_fence.threshold', $form_state->getValue('threshold'));
         $config->set('drupal_fence.expiration', $form_state->getValue('expiration'));
+        $config->set('drupal_fence.block_response', $form_state->getValue('block_response'));
         $config->save();
 
         if ($form_state->getValue('clear_log')) {
