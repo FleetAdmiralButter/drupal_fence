@@ -42,4 +42,4 @@ However, if you'd like Drupal Fence to fire only on an uncached request, you can
 # Warning and Disclaimer
 Please take necessary precautions (perform database backups, QA, etc) if you're using Drupal Fence on anything critical. Although I have tested it thoroughly, there might still be certain edge cases or configurations that will cause it to misbehave. If you find anything, please feel free to create a new issue and I'll have a look. Feedback is always welcome.
 
-You use this module at your own risk. I will not be responsible for any consequences resulting from the use of this module. This includes, but is not limited to: injury/death, loss of data, loss of revenue, information security breaches, environmental damage and Umbral Calamities.
+You use this module at your own risk. I will not be responsible for any consequences resulting from the use of this module. This includes, but is not limited to: injury/death, loss of data, loss of revenue, information security breaches, and environmental damage.

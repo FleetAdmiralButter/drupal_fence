@@ -37,6 +37,8 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
 
         // Block client if path matches or if they have been blocked by flood control and silent mode is disabled.
         if ($is_exploit_path || $is_blocked) {
+            // Do not cache these
+            \Drupal::service('page_cache_kill_switch')->trigger();
             if (!$silent_mode) {
                 if ($block_response === '403') {
                   throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
