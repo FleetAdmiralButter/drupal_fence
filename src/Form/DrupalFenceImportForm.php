@@ -68,6 +68,6 @@ class DrupalFenceImportForm extends ConfigFormBase {
             $database->insert('drupal_fence_flagged_routes')->fields(['exploit_uri' => $url])->execute();
         }
         Cache::invalidateTags(['drupal_fence_checked_paths']);
-        drupal_set_message('The URLs were imported successfully.');
+        \Drupal::service('messenger')->addMessage('The URLs were imported successfully.');
     }
 }
