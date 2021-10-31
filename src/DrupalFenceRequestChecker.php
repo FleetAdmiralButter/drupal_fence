@@ -3,22 +3,32 @@
 namespace Drupal\drupal_fence;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Flood\FloodInterface;
+use Drupal\Core\Database\Connection;
 
 class DrupalFenceRequestChecker {
 
+    private CacheBackendInterface $cache;
+    private FloodInterface $flood;
+    private Connection $database;
     private $threshold;
     private $expiration;
-    public function __construct() {
-        $this->threshold = \Drupal::config('drupal_fence.settings')->get('drupal_fence.threshold');
-        $this->expiration = \Drupal::config('drupal_fence.settings')->get('drupal_fence.expiration');
+    public function __construct(CacheBackendInterface $cache, ConfigFactory $config_factory, FloodInterface $flood, Connection $database) {
+        $this->cache = $cache;
+        $this->database = $database;
+        $this->flood = $flood;
+
+        $this->threshold = $config_factory->get('drupal_fence.settings')->get('drupal_fence.threshold');
+        $this->expiration = $config_factory->get('drupal_fence.settings')->get('drupal_fence.expiration');
     }
 
     public function is_blocked_client($client_identifier) {
-        return !(\Drupal::flood()->isAllowed('drupal_fence.security_violation', $this->threshold, $this->expiration, $client_identifier));
+        return !($this->flood->isAllowed('drupal_fence.security_violation', $this->threshold, $this->expiration, $client_identifier));
     }
 
     public function log_violation($client_identifier) {
-        \Drupal::flood()->register('drupal_fence.security_violation', $this->expiration, $client_identifier);
+        $this->flood->register('drupal_fence.security_violation', $this->expiration, $client_identifier);
     }
 
     private function get_path_cid($path) {
@@ -27,11 +37,10 @@ class DrupalFenceRequestChecker {
 
     public function check_path($path) {
         $flagged = FALSE;
-        if($cache = \Drupal::cache('data')->get($this->get_path_cid($path))) {
+        if($cache = $this->cache->get($this->get_path_cid($path))) {
             $flagged = $cache->data['flagged'];
         } else {
-            $database = \Drupal::service('database');
-            $result = $database->query("SELECT exploit_uri FROM {drupal_fence_flagged_routes} WHERE INSTR(:path, exploit_uri) > 0", [
+            $result = $this->database->query("SELECT exploit_uri FROM {drupal_fence_flagged_routes} WHERE INSTR(:path, exploit_uri) > 0", [
                 ':path' => $path
             ])->fetchAll();
             $flagged = count($result) > 0;
@@ -39,7 +48,7 @@ class DrupalFenceRequestChecker {
                 'path' => $path,
                 'flagged' => $flagged,
             ];
-            \Drupal::cache('data')
+            $this->cache
                 ->set($this->get_path_cid($path),
                       $cached_data,
                       CacheBackendInterface::CACHE_PERMANENT,

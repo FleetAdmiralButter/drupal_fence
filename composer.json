@@ -1,0 +1,9 @@
+{
+  "name": "drupal/drupal_fence",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "description": "Allows blocking of specified routes.",
+  "require": {
+    "drupal/core": "^8.8 || ^9"
+  }
+}
