@@ -5,20 +5,19 @@ namespace Drupal\drupal_fence;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Flood\FloodInterface;
-use Drupal\Core\Database\Connection;
 
 class DrupalFenceRequestChecker {
 
     private CacheBackendInterface $cache;
     private FloodInterface $flood;
-    private Connection $database;
     private $threshold;
     private $expiration;
-    public function __construct(CacheBackendInterface $cache, ConfigFactory $config_factory, FloodInterface $flood, Connection $database) {
+    private $urls;
+    public function __construct(CacheBackendInterface $cache, ConfigFactory $config_factory, FloodInterface $flood) {
         $this->cache = $cache;
-        $this->database = $database;
         $this->flood = $flood;
 
+        $this->urls = $config_factory->get('drupal_fence.settings')->get('urls');
         $this->threshold = $config_factory->get('drupal_fence.settings')->get('threshold');
         $this->expiration = $config_factory->get('drupal_fence.settings')->get('expiration');
     }
@@ -32,7 +31,7 @@ class DrupalFenceRequestChecker {
     }
 
     private function get_path_cid($path) {
-        return 'drupal_fence:checked_path:' . hash('sha1', $path);
+        return 'drupal_fence:checked_path:' . hash('sha256', $path);
     }
 
     public function check_path($path) {
@@ -40,10 +39,12 @@ class DrupalFenceRequestChecker {
         if($cache = $this->cache->get($this->get_path_cid($path))) {
             $flagged = $cache->data['flagged'];
         } else {
-            $result = $this->database->query("SELECT exploit_uri FROM {drupal_fence_flagged_routes} WHERE INSTR(:path, exploit_uri) > 0", [
-                ':path' => $path
-            ])->fetchAll();
-            $flagged = count($result) > 0;
+            foreach ($this->urls as $url) {
+                if (strpos($path, $url) !== false) {
+                    $flagged = TRUE;
+                    break;
+                }
+            }
             $cached_data = [
                 'path' => $path,
                 'flagged' => $flagged,

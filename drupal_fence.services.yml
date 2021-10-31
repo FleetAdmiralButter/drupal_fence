@@ -6,4 +6,4 @@ services:
       - { name: 'event_subscriber'}
   drupal_fence.request_checker:
     class: Drupal\drupal_fence\DrupalFenceRequestChecker
-    arguments: ['@cache.data', '@config.factory', '@flood', '@database']
+    arguments: ['@cache.data', '@config.factory', '@flood']
