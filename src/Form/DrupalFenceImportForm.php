@@ -46,14 +46,9 @@ class DrupalFenceImportForm extends ConfigFormBase {
 
         $form['data'] = [
             '#type' => 'textarea',
-            '#title' => $this->t('Import Data'),
+            '#title' => $this->t('Add Blocked URLs'),
             '#default_value' => implode("\r\n", $config->get('urls')),
-            '#description' => $this->t('Import URLs.'),
-        ];
-
-        $form['warning'] = [
-            '#type' => 'label',
-            '#title' => $this->t('WARNING! This will replace all currently saved exploit URLs.'),
+            '#description' => $this->t('Specify a list of URLs to block.'),
         ];
 
         return $form;

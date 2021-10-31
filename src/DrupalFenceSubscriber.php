@@ -42,17 +42,17 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
         $path = $this->request->getRequestUri();
 
         $is_blocked = $this->drupal_fence_request_checker->is_blocked_client($client_identifier);
-        $is_exploit_path = $this->drupal_fence_request_checker->check_path($path);
+        $is_blocked_path = $this->drupal_fence_request_checker->check_path($path);
 
         // Only log if the client is not already blocked by flood control.
-        if ($is_exploit_path) {
+        if ($is_blocked_path) {
             if (!$is_blocked) {
                 $this->drupal_fence_request_checker->log_violation($client_identifier);
             }
         }
 
         // Block client if path matches or if they have been blocked by flood control and silent mode is disabled.
-        if ($is_exploit_path || $is_blocked) {
+        if ($is_blocked_path || $is_blocked) {
             // Do not cache these
             $this->page_cache_kill_switch->trigger();
             if (!$silent_mode) {
