@@ -1,6 +1,7 @@
 services:
   drupal_fence.drupal_fence.subscriber:
     class: Drupal\drupal_fence\DrupalFenceSubscriber
+    arguments: ['@config.factory', '@request_stack', '@drupal_fence.request_checker', '@page_cache_kill_switch']
     tags:
       - { name: 'event_subscriber'}
   drupal_fence.request_checker:
