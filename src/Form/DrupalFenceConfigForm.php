@@ -25,26 +25,26 @@ class DrupalFenceConfigForm extends ConfigFormBase {
         $form['enabled'] = [
             '#type' => 'checkbox',
             '#title' => $this->t('Enable Drupal Fence'),
-            '#default_value' => $config->get('drupal_fence.enabled'),
+            '#default_value' => $config->get('enabled'),
             '#description' => $this->t('Whether Drupal Fence should run. Disabling Drupal Fence when its not needed can improve the performance of uncached requests.'),
         ];
         $form['silent_mode'] = [
             '#type' => 'checkbox',
             '#title' => $this->t('Silent Mode'),
-            '#default_value' => $config->get('drupal_fence.silent_mode'),
+            '#default_value' => $config->get('silent_mode'),
             '#description' => $this->t('If enabled, Drupal Fence will log clients that try to access flagged routes, but will not do any blocking. Please note that logging will still stop at the configured threshold level to prevent a database overload in the event of an DoS attack.'),
         ];
         $form['threshold'] = [
             '#type' => 'number',
             '#title' => $this->t('Threshold'),
-            '#default_value' => $config->get('drupal_fence.threshold'),
+            '#default_value' => $config->get('threshold'),
             '#description' => $this->t('Number of violations a client can trigger before being blocked by Drupal Fence.'),
         ];
 
         $form['expiration'] = [
             '#type' => 'number',
             '#title' => $this->t('Expiration'),
-            '#default_value' => $config->get('drupal_fence.expiration'),
+            '#default_value' => $config->get('expiration'),
             '#description' => $this->t('How long to track violating clients.'),
         ];
 
@@ -53,7 +53,7 @@ class DrupalFenceConfigForm extends ConfigFormBase {
           '#title' => $this
             ->t('Block Response'),
           '#description' => $this->t('The HTTP status returned when blocking a client.'),
-          '#default_value' => $config->get('drupal_fence.block_response'),
+          '#default_value' => $config->get('block_response'),
           '#options' => [
             '403' => $this->t('403 Access Denied'),
             '404' => $this->t('404 Not Found'),
@@ -88,13 +88,6 @@ class DrupalFenceConfigForm extends ConfigFormBase {
     /**
      * {@inheritdoc}
      */
-    public function validateForm(array &$form, FormStateInterface $form_state) {
-
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getEditableConfigNames() {
         return [
             'drupal_fence.settings'
@@ -106,11 +99,11 @@ class DrupalFenceConfigForm extends ConfigFormBase {
      */
     public function submitForm(array &$form, FormStateInterface $form_state) {
         $config = $this->config('drupal_fence.settings');
-        $config->set('drupal_fence.enabled', $form_state->getValue('enabled'));
-        $config->set('drupal_fence.silent_mode', $form_state->getValue('silent_mode'));
-        $config->set('drupal_fence.threshold', $form_state->getValue('threshold'));
-        $config->set('drupal_fence.expiration', $form_state->getValue('expiration'));
-        $config->set('drupal_fence.block_response', $form_state->getValue('block_response'));
+        $config->set('enabled', $form_state->getValue('enabled'));
+        $config->set('silent_mode', $form_state->getValue('silent_mode'));
+        $config->set('threshold', $form_state->getValue('threshold'));
+        $config->set('expiration', $form_state->getValue('expiration'));
+        $config->set('block_response', $form_state->getValue('block_response'));
         $config->save();
 
         if ($form_state->getValue('clear_log')) {

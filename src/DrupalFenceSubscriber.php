@@ -31,12 +31,12 @@ class DrupalFenceSubscriber implements EventSubscriberInterface {
     public function onKernelRequest($event) {
 
         // Don't run if Drupal Fence is disabled or this isn't a master request
-        if (($this->config_factory->get('drupal_fence.settings')->get('drupal_fence.enabled') == 0) || !($event->getRequestType() === HttpKernelInterface::MASTER_REQUEST)) {
+        if (($this->config_factory->get('drupal_fence.settings')->get('enabled') == 0) || !($event->getRequestType() === HttpKernelInterface::MASTER_REQUEST)) {
             return;
         }
 
-        $silent_mode = $this->config_factory->get('drupal_fence.settings')->get('drupal_fence.silent_mode');
-        $block_response = $this->config_factory->get('drupal_fence.settings')->get('drupal_fence.block_response');
+        $silent_mode = $this->config_factory->get('drupal_fence.settings')->get('silent_mode');
+        $block_response = $this->config_factory->get('drupal_fence.settings')->get('block_response');
 
         $client_identifier = $this->request->getClientIp();
         $path = $this->request->getRequestUri();

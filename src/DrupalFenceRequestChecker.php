@@ -19,8 +19,8 @@ class DrupalFenceRequestChecker {
         $this->database = $database;
         $this->flood = $flood;
 
-        $this->threshold = $config_factory->get('drupal_fence.settings')->get('drupal_fence.threshold');
-        $this->expiration = $config_factory->get('drupal_fence.settings')->get('drupal_fence.expiration');
+        $this->threshold = $config_factory->get('drupal_fence.settings')->get('threshold');
+        $this->expiration = $config_factory->get('drupal_fence.settings')->get('expiration');
     }
 
     public function is_blocked_client($client_identifier) {
